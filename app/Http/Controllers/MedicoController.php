@@ -14,7 +14,7 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        //
+        return view("medicos.index", ["medicos" => Medico::all()]);
     }
 
     /**
@@ -46,7 +46,7 @@ class MedicoController extends Controller
      */
     public function show(Medico $medico)
     {
-        //
+        return $medico;
     }
 
     /**

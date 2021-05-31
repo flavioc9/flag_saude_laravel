@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Medico;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MedicoController extends Controller
 {
@@ -24,7 +25,7 @@ class MedicoController extends Controller
      */
     public function create()
     {
-        //
+        return view("medicos.create");
     }
 
     /**
@@ -35,7 +36,30 @@ class MedicoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+
+        $rules = [
+            "name" => "required",
+            "address" => "required",
+            "phone" => "required|numeric|digits:9"
+        ];
+
+        $validator = Validator::make($input, $rules);
+
+        if($validator->fails()){
+            return redirect()->route("medicos.index")->withErrors($validator->errors());
+        }
+
+        // $medico = new Medico($input);
+        $medico = new Medico();
+        $medico->name = $input['name'];
+        $medico->address = $input['address'];
+        $medico->phone = $input['phone'];
+        $medico->save();
+
+
+        return redirect()->route("medicos.index")->with("message", "Médico inserido com sucesso!");
+
     }
 
     /**
@@ -46,7 +70,7 @@ class MedicoController extends Controller
      */
     public function show(Medico $medico)
     {
-        return $medico;
+        return view("medicos.show", ["medico" => $medico]);
     }
 
     /**

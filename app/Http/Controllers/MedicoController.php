@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medico;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,14 +39,7 @@ class MedicoController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-
-        $rules = [
-            "name" => "required",
-            "address" => "required",
-            "phone" => "required|numeric|digits:9"
-        ];
-
-        $validator = Validator::make($input, $rules);
+        $validator = $this->validateInputs($input);
 
         if($validator->fails()){
             return redirect()->route("medicos.index")->withErrors($validator->errors());
@@ -81,7 +76,7 @@ class MedicoController extends Controller
      */
     public function edit(Medico $medico)
     {
-        //
+        return view("medicos.edit", ["medico" => $medico]);
     }
 
     /**
@@ -93,7 +88,24 @@ class MedicoController extends Controller
      */
     public function update(Request $request, Medico $medico)
     {
-        //
+        $input = $request->all();
+        $validator = $this->validateInputs($input);
+
+        if($validator->fails()){
+            return redirect()->route("medicos.edit", $medico->id)->withErrors($validator->errors());
+        }
+
+        $medico->name = $input["name"];
+        $medico->address = $input["address"];
+        $medico->phone = $input["phone"];
+        try{
+            $medico->save();
+        }catch(Exception $e){
+            return redirect()->route("medicos.index")->withErrors("Ocorreu um erro!");
+        }
+
+
+        return redirect()->route("medicos.index")->with("message", "Médico $medico->id editado com sucesso!");
     }
 
     /**
@@ -104,6 +116,18 @@ class MedicoController extends Controller
      */
     public function destroy(Medico $medico)
     {
-        //
+        Medico::destroy($medico->id);
+        //$medico->delete(); também pode ser utilizado em substituição (instancia)
+        return redirect()->route("medicos.index")->with("message", "Médico $medico->id eliminado com sucesso!");
+    }
+
+    private function validateInputs($input){
+        $rules = [
+            "name" => "required",
+            "address" => "required",
+            "phone" => "required|numeric|digits:9"
+        ];
+
+        return Validator::make($input, $rules);
     }
 }

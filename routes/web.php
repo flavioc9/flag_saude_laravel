@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MedicoController;
+use App\Http\Controllers\SpecialityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ Route::get('/', function () {
 });
 
 Route::resource('medicos', MedicoController::class)->middleware(['auth']);
+Route::resource('specialities', SpecialityController::class)->middleware(['auth']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

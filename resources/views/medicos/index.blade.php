@@ -39,6 +39,11 @@
                 <td>{{ $medico->phone ?? '' }}</td>
                 <td>
                     <a class="btn btn-small btn-success" href="{{ route("medicos.show",$medico->id)}}"><i class="fa fa-eye"></i></a>
+                    <a class="btn btn-small btn-info" href="{{ route("medicos.edit",$medico->id)}}"><i class="fa fa-edit"></i></a>
+                    <form style="display: inline" method="POST" action="{{ route("medicos.destroy", $medico->id) }}">
+                        @csrf @method("DELETE")
+                        <button type="submit" class="btn btn-small btn-danger"><i class="fa fa-times"></i></button>
+                    </form>
                 </td>
             </tr>
             @endforeach

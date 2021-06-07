@@ -4,7 +4,7 @@
             {{ __('Médicos') }}
         </h2>
     </x-slot>
-    <form method="POST" action="{{ route('medicos.store') }}">
+    <form method="POST" action="{{ route('medicos.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
@@ -33,6 +33,13 @@
                         <option value="{{$especialidade->id}}">{{$especialidade->name}}</option>
                     @endforeach
                 </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto') }}</label>
+            <div class="col-md-6">
+                <input type="file" id="photo" class="form-control" name="photo" autofocus>
             </div>
         </div>
 

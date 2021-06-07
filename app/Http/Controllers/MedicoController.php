@@ -39,9 +39,9 @@ class MedicoController extends Controller
      */
     public function store(Request $request)
     {
-        //var_dump($request->get("name"));
         $input = $request->all();
         $validator = $this->validateInputs($input);
+        $input['photo'] = $this->saveFoto($request, uniqid());
 
         if($validator->fails()){
             return redirect()->route('medicos.index')->withErrors($validator->errors());
@@ -136,6 +136,21 @@ class MedicoController extends Controller
         $medico->address = $input['address'];
         $medico->phone = $input['phone'];
         $medico->speciality_id = $input['speciality'];
+        $medico->photo = $input['photo'];
         return $medico;
+    }
+
+
+    private function saveFoto($request, $name){
+        if ($request->hasFile('foto')) {
+            if ($request->file('foto')->isValid()) {
+                $file = $request->file('foto');
+                $extension = $file->extension();
+                $file->storeAs('public', $name.".".$extension);
+                return $name.".".$extension;
+            }
+            //throw new Exception('Uploaded file not a valid image');
+        }
+        return null;
     }
 }

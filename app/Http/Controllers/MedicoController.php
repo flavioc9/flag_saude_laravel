@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medico;
+use App\Models\Speciality;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class MedicoController extends Controller
      */
     public function create()
     {
-        return view("medicos.create");
+        return view("medicos.create", ["especialidades" => Speciality::all()]);
     }
 
     /**
@@ -38,24 +39,21 @@ class MedicoController extends Controller
      */
     public function store(Request $request)
     {
+        //var_dump($request->get("name"));
         $input = $request->all();
         $validator = $this->validateInputs($input);
 
         if($validator->fails()){
-            return redirect()->route("medicos.index")->withErrors($validator->errors());
+            return redirect()->route('medicos.index')->withErrors($validator->errors());
         }
 
-        // $medico = new Medico($input);
-        $medico = new Medico();
-        $medico->name = $input['name'];
-        $medico->address = $input['address'];
-        $medico->phone = $input['phone'];
+        //$medico = new Medico($input);
+        $medico = $this->fillMedico(new Medico(), $input);
         $medico->save();
 
-
-        return redirect()->route("medicos.index")->with("message", "Médico inserido com sucesso!");
-
+        return redirect()->route('medicos.index')->with("message", "Médico $medico->id inserido com sucesso!");
     }
+
 
     /**
      * Display the specified resource.
@@ -65,7 +63,7 @@ class MedicoController extends Controller
      */
     public function show(Medico $medico)
     {
-        return view("medicos.show", ["medico" => $medico]);
+        return view('medicos.show', ["medico" => $medico]);
     }
 
     /**
@@ -76,7 +74,7 @@ class MedicoController extends Controller
      */
     public function edit(Medico $medico)
     {
-        return view("medicos.edit", ["medico" => $medico]);
+        return view('medicos.edit', ["medico" => $medico, "especialidades" => Speciality::all()]);
     }
 
     /**
@@ -92,20 +90,18 @@ class MedicoController extends Controller
         $validator = $this->validateInputs($input);
 
         if($validator->fails()){
-            return redirect()->route("medicos.edit", $medico->id)->withErrors($validator->errors());
+            return redirect()->route('medicos.edit', $medico->id)->withErrors($validator->errors());
         }
 
-        $medico->name = $input["name"];
-        $medico->address = $input["address"];
-        $medico->phone = $input["phone"];
+        $medico = $this->fillMedico($medico, $input);
         try{
             $medico->save();
         }catch(Exception $e){
-            return redirect()->route("medicos.index")->withErrors("Ocorreu um erro!");
+            return redirect()->route('medicos.index')->withErrors("Ocorreu um erro!");
         }
 
 
-        return redirect()->route("medicos.index")->with("message", "Médico $medico->id editado com sucesso!");
+        return redirect()->route('medicos.index')->with("message", "Médico $medico->id editado com sucesso!");
     }
 
     /**
@@ -116,18 +112,30 @@ class MedicoController extends Controller
      */
     public function destroy(Medico $medico)
     {
+        //$medico->delete();
         Medico::destroy($medico->id);
-        //$medico->delete(); também pode ser utilizado em substituição (instancia)
-        return redirect()->route("medicos.index")->with("message", "Médico $medico->id eliminado com sucesso!");
+        return redirect()->route('medicos.index')->with('message', "Médico eliminado com sucesso!");
     }
 
     private function validateInputs($input){
+
         $rules = [
-            "name" => "required",
-            "address" => "required",
-            "phone" => "required|numeric|digits:9"
+            'name' => 'required',
+            'address' => 'required',
+            'phone' => 'required|numeric|digits:9',
+            'speciality' => 'numeric'
         ];
 
         return Validator::make($input, $rules);
+    }
+
+
+    private function fillMedico(Medico $medico, array $input) : Medico
+    {
+        $medico->name = $input['name'];
+        $medico->address = $input['address'];
+        $medico->phone = $input['phone'];
+        $medico->speciality_id = $input['speciality'];
+        return $medico;
     }
 }

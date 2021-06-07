@@ -1,29 +1,38 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Medicos') }}
+            {{ __('Médicos') }}
         </h2>
     </x-slot>
-    <form method="POST" action="{{ route("medicos.store") }}">
+    <form method="POST" action="{{ route('medicos.store') }}">
         @csrf
         <div class="form-group row">
-            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __("Nome") }}</label>
+            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nome') }}</label>
             <div class="col-md-6">
-                <input type="text" name="name" id="name" class="form-control" required autofocus>
+                <input type="text" id="name" class="form-control" name="name" required autofocus>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="adress" class="col-md-4 col-form-label text-md-right">{{ __('Morada') }}</label>
+            <div class="col-md-6">
+                <input type="text" id="address" class="form-control" name="address" required autofocus>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phone" class="col-md-4 col-form-label text-md-right">{{ __('Telefone') }}</label>
+            <div class="col-md-6">
+                <input type="text" id="phone" class="form-control" name="phone" required autofocus>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="address" class="col-md-4 col-form-label text-md-right">{{ __("Morada") }}</label>
+            <label for="speciality" class="col-md-4 col-form-label text-md-right">{{ __('Especialidade') }}</label>
             <div class="col-md-6">
-                <input type="text" name="address" id="address" class="form-control" required autofocus>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label for="phone" class="col-md-4 col-form-label text-md-right">{{ __("Telefone") }}</label>
-            <div class="col-md-6">
-                <input type="text" name="phone" id="phone" class="form-control" required autofocus>
+                <select class="custom-select" name="speciality">
+                    @foreach ($especialidades as $especialidade )
+                        <option value="{{$especialidade->id}}">{{$especialidade->name}}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 

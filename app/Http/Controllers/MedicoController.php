@@ -40,8 +40,9 @@ class MedicoController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        $validator = $this->validateInputs($input);
         $input['photo'] = $this->saveFoto($request, uniqid());
+        $validator = $this->validateInputs($input);
+
 
         if($validator->fails()){
             return redirect()->route('medicos.index')->withErrors($validator->errors());
@@ -87,6 +88,7 @@ class MedicoController extends Controller
     public function update(Request $request, Medico $medico)
     {
         $input = $request->all();
+        $input['photo'] = $this->saveFoto($request, uniqid());
         $validator = $this->validateInputs($input);
 
         if($validator->fails()){
@@ -136,15 +138,17 @@ class MedicoController extends Controller
         $medico->address = $input['address'];
         $medico->phone = $input['phone'];
         $medico->speciality_id = $input['speciality'];
-        $medico->photo = $input['photo'];
+        if(isset($input['photo'])){
+            $medico->photo = $input["photo"];
+        }
         return $medico;
     }
 
 
     private function saveFoto($request, $name){
-        if ($request->hasFile('foto')) {
-            if ($request->file('foto')->isValid()) {
-                $file = $request->file('foto');
+        if ($request->hasFile('photo')) {
+            if ($request->file('photo')->isValid()) {
+                $file = $request->file('photo');
                 $extension = $file->extension();
                 $file->storeAs('public', $name.".".$extension);
                 return $name.".".$extension;

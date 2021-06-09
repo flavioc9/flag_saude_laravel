@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <form method="POST" action="{{ route('medicos.update', $medico->id) }}">
+    <form method="POST" action="{{ route('medicos.update', $medico->id) }}" enctype="multipart/form-data">
         @csrf @method('PUT')
 
         <div class="form-group row">
@@ -59,6 +59,13 @@
                         <strong>{{ $message }}</strong>
                     </span>
                 @enderror
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="photo" class="col-md-4 col-form-label text-md-right">{{ __('Foto') }}</label>
+            <div class="col-md-6">
+                <input type="file" id="photo" class="form-control" name="photo" autofocus>
             </div>
         </div>
 

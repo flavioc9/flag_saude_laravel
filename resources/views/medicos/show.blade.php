@@ -12,7 +12,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-6 col-md-5" style="text-align: center">
-                                a foto médico
+                                <img src= "{{ asset("storage/". $medico->photo) }}" alt="fotografia médico">
                             </div>
                             <div class="col-sm-6 col-md-7">
                                 <h4><strong>{{ $medico->name ?? '' }}</strong></h4>

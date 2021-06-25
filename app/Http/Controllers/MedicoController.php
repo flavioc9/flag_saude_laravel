@@ -43,7 +43,6 @@ class MedicoController extends Controller
         $input['photo'] = $this->saveFoto($request, uniqid());
         $validator = $this->validateInputs($input);
 
-
         if($validator->fails()){
             return redirect()->route('medicos.index')->withErrors($validator->errors());
         }
@@ -114,8 +113,11 @@ class MedicoController extends Controller
      */
     public function destroy(Medico $medico)
     {
-        //$medico->delete();
-        Medico::destroy($medico->id);
+        try{
+            Medico::destroy($medico->id);
+        }catch(Exception $e){
+            return redirect()->route('medicos.index')->withErrors("Ocorreu um erro ao tentar eliminar o médico " . $medico->id . " !");
+        }
         return redirect()->route('medicos.index')->with('message', "Médico eliminado com sucesso!");
     }
 
@@ -138,9 +140,11 @@ class MedicoController extends Controller
         $medico->address = $input['address'];
         $medico->phone = $input['phone'];
         $medico->speciality_id = $input['speciality'];
+
         if(isset($input['photo'])){
-            $medico->photo = $input["photo"];
+            $medico->photo = $input['photo'];
         }
+
         return $medico;
     }
 
